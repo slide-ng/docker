@@ -18,13 +18,12 @@ fewer moving parts: one `Dockerfile`, one readable `entrypoint.sh`, one 100-line
 | `bash tests/entrypoint.test.sh` (fake `slide-ng`, real `serve.mjs`) | 59 passed |
 | `entrypoint.sh` against the real slide.ng core, outside Docker (`build --base /talk/`, `serve --dist`, `export --format pdf`, `dev`) | worked |
 | `docker compose config` | parses |
-| **Image build and run** | **NOT VERIFIED.** The sandbox this was written in has the Docker client but no Docker daemon, so `docker build` and `docker run` were never executed. |
-| Base image tag `node:22.23.3-bookworm-slim` exists on Docker Hub | NOT VERIFIED (no network access to the registry) |
-| Debian `chromium`, `fonts-*`, `tini` packages install; Chromium starts inside the container | NOT VERIFIED |
-| Export from inside the container (`--shm-size`, `--cap-drop ALL`, `--read-only`, any `--user`) | NOT VERIFIED |
+| Image build and `serve` | passed on Docker Desktop 29.8.2 for Mac (2026-10-16) |
+| Base image tag exists; Debian `chromium`, `fonts-*`, `tini` install; Chromium starts inside the container | passed (2026-10-16) |
+| Export from inside the container with `--shm-size=1g` and the deck mounted `:ro` | passed (PDF written). `--cap-drop ALL`, `--read-only` and `dev` mode are NOT VERIFIED. On Docker Desktop for Mac a deck mounted read-write fails, so mount it `:ro` |
 | GitHub Actions workflow runs | NOT VERIFIED (YAML parses only) |
 
-Until someone has built the image once, treat every `docker` command below as untested.
+The commands marked NOT VERIFIED above are untested.
 
 ## Getting slide.ng into the image
 
@@ -169,8 +168,8 @@ read-only `/slides` works: the deck is copied to `/tmp` first.
 
 ### Chromium and the sandbox
 
-slide.ng starts Chromium itself with `--no-sandbox` (set in its code, not here), because Chromium's own sandbox needs privileges a normal
-container does not have. So no `--privileged`, `SYS_ADMIN` capability or custom seccomp profile is needed, and none is used. The container is
+The image sets `SLIDE_NG_NO_SANDBOX=1`, so slide.ng starts Chromium with `--no-sandbox`: Chromium's own sandbox needs privileges a normal
+container does not have. Outside the image slide.ng keeps the sandbox on. So no `--privileged`, `SYS_ADMIN` capability or custom seccomp profile is needed, and none is used. The container is
 the sandbox: the image runs as a non-root user, and the compose file drops all capabilities and sets `no-new-privileges`. Practical notes:
 
 - Give export enough shared memory: `--shm-size=1g`. Docker's default 64 MB makes Chromium crash on big slides.

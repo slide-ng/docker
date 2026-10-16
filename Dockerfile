@@ -48,6 +48,7 @@ RUN mkdir -p /slides /out \
 
 # --- 5. Run settings.
 ENV CHROME_PATH=/usr/bin/chromium \
+    SLIDE_NG_NO_SANDBOX=1 \
     NG_CLI_ANALYTICS=false
 # uid 1000 is the base image's `node` user.
 USER 1000:1000
