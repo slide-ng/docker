@@ -38,7 +38,13 @@ warns 'no blank line' 'fix: a thing\nbody right away\n' 'blank line'
 warns 'trailer line' 'fix: a thing\n\nWhy.\n\nCo-authored-by: Someone <a@example.com>\n' 'trailer'
 
 # A missing message file must not break the commit.
-sh "$HOOK" "$T/does-not-exist" && { pass=$((pass + 1)); echo 'ok   missing file'; } || { fail=$((fail + 1)); echo 'FAIL missing file'; }
+if sh "$HOOK" "$T/does-not-exist"; then
+  pass=$((pass + 1))
+  echo 'ok   missing file'
+else
+  fail=$((fail + 1))
+  echo 'FAIL missing file'
+fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 [[ $fail -eq 0 ]]
