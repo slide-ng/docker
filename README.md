@@ -205,12 +205,28 @@ Tag images with the slide.ng version they contain. For Docker Hub use `registry:
 
 ```sh
 bash tests/entrypoint.test.sh      # no Docker needed; needs bash, node 22, curl
+bash tests/commit-msg.test.sh      # the commit message hook
 shellcheck -x entrypoint.sh tests/entrypoint.test.sh
 hadolint Dockerfile
 ```
 
 The test uses a fake `slide-ng` that records its arguments and creates the files the real one would, and runs the real `serve.mjs`.
 It cannot catch a problem inside the image (a missing package, a wrong path); that needs a real build. See [CONTRIBUTING.md](CONTRIBUTING.md).
-Security reports: [SECURITY.md](SECURITY.md). License: MIT ([LICENSE](LICENSE)).
+License: MIT ([LICENSE](LICENSE)).
+
+## Related repositories
+
+- [slide.ng](https://github.com/slide-ng/slide.ng): the presentation tool itself.
+- [slide.ng-themes](https://github.com/slide-ng/slide.ng-themes): the official themes.
+- [slide.ng-starter](https://github.com/slide-ng/slide.ng-starter): a starter deck to copy.
+- [slide.ng-docs](https://github.com/slide-ng/slide.ng-docs): the documentation site.
+- [slide.ng-docker](https://github.com/slide-ng/slide.ng-docker): this container image.
+- [slide.ng-vscode](https://github.com/slide-ng/slide.ng-vscode): a Visual Studio Code extension.
+
+These addresses are placeholders until the repositories are published.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md). Changes follow the [Code of Conduct](CODE_OF_CONDUCT.md); security reports go through [SECURITY.md](SECURITY.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 Repository address used in this text: https://github.com/slide-ng/slide.ng-docker (a placeholder until the owner decides).
