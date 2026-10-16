@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme-banner-dark.png">
+  <img alt="slide.ng" src="assets/readme-banner-light.png" width="800">
+</picture>
+
 # slide.ng-docker
 
 A Docker image that runs [slide.ng](https://github.com/slide-ng/slide.ng) decks: live dev server, static build,
