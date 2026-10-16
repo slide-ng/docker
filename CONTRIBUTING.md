@@ -65,3 +65,7 @@ Pull requests are squash merged, so the pull request title must follow the same 
 - Say what you ran. Do not claim a check you did not run.
 - Update the README when you change a variable, a port or a mode.
 - Open an issue first for large changes, so we can agree on the approach.
+
+## Recognising contributions
+
+Everyone who helps is listed in the Contributors section of the README, whatever the kind of help: code, docs, design, review or triage. To add someone, comment `@all-contributors please add @user for code` on an issue or pull request (use another type such as `doc`, `review` or `bug` when it fits). The bot opens a pull request that updates `.all-contributorsrc` and the README.

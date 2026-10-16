@@ -1,0 +1,28 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "erkamyaman",
+      "name": "Erkam Yaman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88717125?v=4",
+      "profile": "https://github.com/erkamyaman",
+      "contributions": [
+        "code",
+        "doc",
+        "infra",
+        "maintenance"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "slide.ng-docker",
+  "projectOwner": "slide-ng"
+}
