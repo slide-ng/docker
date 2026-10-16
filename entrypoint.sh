@@ -7,6 +7,7 @@
 #   dev      serve the deck with live reload (needs a password, see below)       default
 #   build    static site into /out
 #   export   pdf, png, pptx or md file into /out
+#   export-notes   speaker notes as a pdf into /out
 #   serve    build the deck, then serve the static site on port 8080
 #   watch    like serve, and rebuild when a file in /slides changes
 #   help     print this text
