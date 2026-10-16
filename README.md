@@ -214,6 +214,14 @@ The test uses a fake `slide-ng` that records its arguments and creates the files
 It cannot catch a problem inside the image (a missing package, a wrong path); that needs a real build. See [CONTRIBUTING.md](CONTRIBUTING.md).
 License: MIT ([LICENSE](LICENSE)).
 
+## Related projects and credits
+
+The idea of a container for presentation decks comes from [slidevjs/container](https://github.com/slidevjs/container) (MIT, Nicolas Formichella) for [Slidev](https://github.com/slidevjs/slidev) (MIT, Anthony Fu and Slidev contributors). No code, script or file of those projects is copied here, so there is no separate NOTICE file.
+
+## Disclaimer
+
+slide.ng is an independent open-source project. It is not affiliated with or endorsed by the Angular team or Google, or by Slidev. Angular is a trademark of Google LLC. Slidev is a project of its own maintainers. The names are used only to describe what slide.ng works with or is based on. This is a plain notice, not legal advice.
+
 ## Related repositories
 
 - [slide.ng](https://github.com/slide-ng/slide.ng): the presentation tool itself.
