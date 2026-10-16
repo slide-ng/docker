@@ -1,0 +1,63 @@
+name: Bug report
+description: The image, the entrypoint or the static server does not work as the README says
+labels: [bug, needs triage]
+body:
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Image mode
+      options:
+        - dev
+        - build
+        - export
+        - serve
+        - watch
+        - A custom command (for example slide-ng format)
+        - Building the image
+        - Not a mode (compose file, workflow, documentation)
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Say what you did, what you expected and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: The command or compose profile you ran
+      description: The full `docker run` or `docker compose` command, with the environment variables you set (leave out secrets such as SLIDES_PASSWORD).
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: image
+    attributes:
+      label: Image tag or commit, and slide.ng version
+      placeholder: slide-ng-docker:local built from commit abc1234, slide.ng 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: docker-version
+    attributes:
+      label: Docker version and operating system
+      description: The output of `docker version`, and say if you use Docker Desktop, Podman or rootless Docker.
+      placeholder: Docker 27.3.1, Ubuntu 24.04
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Container output
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the existing issues.
+          required: true
+        - label: The problem is in this image, not in slide.ng itself (those belong in the slide.ng repository).
+          required: true

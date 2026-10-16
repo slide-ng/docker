@@ -1,0 +1,44 @@
+name: Feature request
+description: Suggest something new for the image
+labels: [feature, needs triage]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - A new mode, or a change to a mode
+        - Environment variables or flags
+        - The compose file
+        - The static server
+        - The image (packages, size, platforms)
+        - Documentation
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What can you not do today, or what is hard?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like
+      description: How it could work. This repository stays small on purpose, so say what it would cost in lines and packages.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Other ways you tried
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the existing issues and the README.
+          required: true
+        - label: I might be able to help build it.
