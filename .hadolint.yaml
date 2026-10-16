@@ -1,0 +1,5 @@
+# DL3008 asks for pinned apt package versions. We install Debian's current Chromium and fonts on purpose:
+# Chromium gets security updates often, and an old pinned version disappears from the Debian archive.
+# The base image tag is pinned instead (NODE_VERSION); rebuild to pick up new packages.
+ignored:
+  - DL3008

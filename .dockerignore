@@ -1,0 +1,13 @@
+# The build context only needs: Dockerfile, entrypoint.sh, serve.mjs and packages/*.tgz
+.git
+.github
+.editorconfig
+.gitignore
+.env
+*.md
+!packages/**/*.md
+tests
+out
+slides
+docker-compose.yml
+node_modules
