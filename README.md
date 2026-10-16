@@ -28,11 +28,11 @@ The commands marked NOT VERIFIED above are untested.
 ## Build the image
 
 slide.ng is not on npm yet, so the build argument `SLIDE_NG_SOURCE` is either a tarball inside the build context
-or anything `npm install` accepts (`slide-ng@1.2.3`, once published):
+or anything `npm install` accepts (`@slide-ng/core@1.2.3`, once published):
 
 ```sh
 npm pack /path/to/slide.ng --pack-destination packages
-docker build --build-arg SLIDE_NG_SOURCE=packages/slide-ng-0.0.0.tgz -t slide-ng .
+docker build --build-arg SLIDE_NG_SOURCE=packages/slide-ng-core-0.1.0.tgz -t slide-ng .
 ```
 
 Other build arguments: `NODE_VERSION` (default `22.23.3`; slide.ng needs 22.22.3 or newer) and `EXTRA_FONTS`

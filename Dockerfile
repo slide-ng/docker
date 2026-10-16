@@ -1,7 +1,7 @@
 # slide.ng in a container: serve a deck, build it to a static site, or export it to PDF, PNG or PPTX.
 # Usage and every variable are in the README. Build:
 #   npm pack /path/to/slide.ng --pack-destination packages
-#   docker build --build-arg SLIDE_NG_SOURCE=packages/slide-ng-0.0.0.tgz -t slide-ng .
+#   docker build --build-arg SLIDE_NG_SOURCE=packages/slide-ng-core-0.1.0.tgz -t slide-ng .
 
 # Node 22. slide.ng needs >= 22.22.3 (its "engines" field).
 ARG NODE_VERSION=22.23.3
@@ -22,7 +22,7 @@ RUN apt-get update \
 
 # --- 2. slide.ng itself. A global install keeps its dependencies inside the package folder, which is
 #        where slide.ng looks for them. SLIDE_NG_SOURCE is one of:
-#          - a file inside this build context, such as packages/slide-ng-0.0.0.tgz (made with `npm pack`)
+#          - a file inside this build context, such as packages/slide-ng-core-0.1.0.tgz (made with `npm pack`)
 #          - anything npm understands: a package name or name@version
 #        slide.ng is not on npm yet, so the default (slide-ng) only works once it is published.
 ARG SLIDE_NG_SOURCE=slide-ng
