@@ -11,17 +11,17 @@ fewer moving parts: one `Dockerfile`, one readable `entrypoint.sh`, one 100-line
 
 ## Status
 
-| Check | Result |
-| --- | --- |
-| `shellcheck` on `entrypoint.sh` and the test | passed |
-| `hadolint` on `Dockerfile` | passed (one rule off, see `.hadolint.yaml`) |
-| `bash tests/entrypoint.test.sh` (fake `slide-ng`, real `serve.mjs`) | 59 passed |
-| `entrypoint.sh` against the real slide.ng core, outside Docker (`build --base /talk/`, `serve --dist`, `export --format pdf`, `dev`) | worked |
-| `docker compose config` | parses |
-| Image build and `serve` | passed on Docker Desktop 29.8.2 for Mac (2026-10-16) |
-| Base image tag exists; Debian `chromium`, `fonts-*`, `tini` install; Chromium starts inside the container | passed (2026-10-16) |
-| Export from inside the container with `--shm-size=1g` and the deck mounted `:ro` | passed (PDF written). `--cap-drop ALL`, `--read-only` and `dev` mode are NOT VERIFIED. On Docker Desktop for Mac a deck mounted read-write fails, so mount it `:ro` |
-| GitHub Actions workflow runs | NOT VERIFIED (YAML parses only) |
+| Check                                                                                                                                | Result                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shellcheck` on `entrypoint.sh` and the test                                                                                         | passed                                                                                                                                                              |
+| `hadolint` on `Dockerfile`                                                                                                           | passed (one rule off, see `.hadolint.yaml`)                                                                                                                         |
+| `bash tests/entrypoint.test.sh` (fake `slide-ng`, real `serve.mjs`)                                                                  | 59 passed                                                                                                                                                           |
+| `entrypoint.sh` against the real slide.ng core, outside Docker (`build --base /talk/`, `serve --dist`, `export --format pdf`, `dev`) | worked                                                                                                                                                              |
+| `docker compose config`                                                                                                              | parses                                                                                                                                                              |
+| Image build and `serve`                                                                                                              | passed on Docker Desktop 29.8.2 for Mac (2026-10-16)                                                                                                                |
+| Base image tag exists; Debian `chromium`, `fonts-*`, `tini` install; Chromium starts inside the container                            | passed (2026-10-16)                                                                                                                                                 |
+| Export from inside the container with `--shm-size=1g` and the deck mounted `:ro`                                                     | passed (PDF written). `--cap-drop ALL`, `--read-only` and `dev` mode are NOT VERIFIED. On Docker Desktop for Mac a deck mounted read-write fails, so mount it `:ro` |
+| GitHub Actions workflow runs                                                                                                         | NOT VERIFIED (YAML parses only)                                                                                                                                     |
 
 The commands marked NOT VERIFIED above are untested.
 
@@ -61,15 +61,15 @@ Other build arguments: `NODE_VERSION` (default `22.23.3`; slide.ng needs 22.22.3
 `docker run [options] slide-ng <mode> [flags]`. Flags after the mode go to slide.ng unchanged
 (see the slide.ng README for all of them). The deck is `/slides/slides.md` (set another name with `SLIDES_FILE=my.md`).
 
-| Mode | What it does | Port | Mounts |
-| --- | --- | --- | --- |
-| `dev` (default) | live dev server, listens on `0.0.0.0`, password protected | 4230 | `/slides` read-write |
-| `build` | static site written to `/out` | | `/slides`, `/out` |
-| `export` | PDF (default), PNG, PPTX or Markdown written to `/out` | | `/slides`, `/out` |
-| `export-notes` | speaker notes as PDF into `/out` | | `/slides`, `/out` |
-| `serve` | builds the deck, then serves it (Node, no nginx) | 8080 | `/slides` |
-| `watch` | like `serve`, and rebuilds when something in `/slides` changes | 8080 | `/slides` |
-| `help` | prints the modes and variables | | |
+| Mode            | What it does                                                   | Port | Mounts               |
+| --------------- | -------------------------------------------------------------- | ---- | -------------------- |
+| `dev` (default) | live dev server, listens on `0.0.0.0`, password protected      | 4230 | `/slides` read-write |
+| `build`         | static site written to `/out`                                  |      | `/slides`, `/out`    |
+| `export`        | PDF (default), PNG, PPTX or Markdown written to `/out`         |      | `/slides`, `/out`    |
+| `export-notes`  | speaker notes as PDF into `/out`                               |      | `/slides`, `/out`    |
+| `serve`         | builds the deck, then serves it (Node, no nginx)               | 8080 | `/slides`            |
+| `watch`         | like `serve`, and rebuilds when something in `/slides` changes | 8080 | `/slides`            |
+| `help`          | prints the modes and variables                                 |      |                      |
 
 Any other first word is run as a command: `docker run slide-ng format`, `... create .`, `... bash`.
 
@@ -147,13 +147,13 @@ old one in one step; if a rebuild fails, the last good version keeps being serve
 
 ## Reference
 
-| Variable | Default | Used by |
-| --- | --- | --- |
-| `SLIDES_FILE` | `slides.md` | all modes |
-| `SLIDES_PASSWORD`, `SLIDES_PASSWORD_FILE`, `SLIDES_NO_PASSWORD` | random password | dev |
-| `PORT` | `4230` (dev), `8080` (serve, watch) | dev, serve, watch |
-| `WATCH_INTERVAL` | `2` | watch |
-| `CHROME_PATH` | `/usr/bin/chromium` | export, build `--download` |
+| Variable                                                        | Default                             | Used by                    |
+| --------------------------------------------------------------- | ----------------------------------- | -------------------------- |
+| `SLIDES_FILE`                                                   | `slides.md`                         | all modes                  |
+| `SLIDES_PASSWORD`, `SLIDES_PASSWORD_FILE`, `SLIDES_NO_PASSWORD` | random password                     | dev                        |
+| `PORT`                                                          | `4230` (dev), `8080` (serve, watch) | dev, serve, watch          |
+| `WATCH_INTERVAL`                                                | `2`                                 | watch                      |
+| `CHROME_PATH`                                                   | `/usr/bin/chromium`                 | export, build `--download` |
 
 Volumes: `/slides` (the deck) and `/out` (results). Ports: `4230` (dev), `8080` (serve, watch). Working directory: `/slides`.
 
@@ -185,22 +185,22 @@ The workflow in `.github/workflows/build.yml` lints, tests and builds the image 
 `packages: write` permission:
 
 ```yaml
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: ghcr.io/${{ github.repository }}
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: ${{ github.ref == 'refs/heads/main' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: SLIDE_NG_SOURCE=${{ env.SLIDE_NG_SOURCE }}
+- uses: docker/login-action@v3
+  with:
+    registry: ghcr.io
+    username: ${{ github.actor }}
+    password: ${{ secrets.GITHUB_TOKEN }}
+- uses: docker/metadata-action@v5
+  id: meta
+  with:
+    images: ghcr.io/${{ github.repository }}
+- uses: docker/build-push-action@v6
+  with:
+    context: .
+    push: ${{ github.ref == 'refs/heads/main' }}
+    tags: ${{ steps.meta.outputs.tags }}
+    labels: ${{ steps.meta.outputs.labels }}
+    build-args: SLIDE_NG_SOURCE=${{ env.SLIDE_NG_SOURCE }}
 ```
 
 Tag images with the slide.ng version they contain. For Docker Hub use `registry: docker.io` and repository secrets for the credentials.
