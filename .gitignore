@@ -1,0 +1,8 @@
+# Tarballs made with `npm pack` (see README, "Getting slide.ng into the image")
+/packages/*.tgz
+# Local compose settings (SLIDES_PASSWORD lives here)
+.env
+# Output of the examples
+/out/
+/slides/
+node_modules/
