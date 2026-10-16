@@ -1,0 +1,63 @@
+#!/bin/sh
+# Warns when the commit message does not read `type(scope): summary` (see CONTRIBUTING.md).
+# It never blocks the commit. Turn it on with: git config core.hooksPath .githooks
+types='feat fix perf refactor test docs style build ci chore revert'
+scopes='entrypoint dockerfile serve compose tests docs ci'
+
+file="$1"
+[ -r "$file" ] || exit 0
+
+# The first line that is not a comment, as git does it.
+header="$(grep -v '^#' "$file" | sed -n '/[^[:space:]]/{p;q;}')"
+[ -n "$header" ] || exit 0
+case "$header" in
+  'Merge '* | 'Revert "'* | 'fixup! '* | 'squash! '*) exit 0 ;;
+esac
+
+problems=''
+add() { problems="$problems  - $1
+"; }
+
+if [ "${#header}" -gt 72 ]; then
+  add "The first line has ${#header} characters; keep it to 72."
+fi
+
+if ! printf '%s\n' "$header" | grep -Eq '^[a-z]+(\([^)]*\))?!?: .+'; then
+  add "The first line must look like \"type(scope): summary\", not \"$header\"."
+else
+  type="$(printf '%s\n' "$header" | sed -E 's/^([a-z]+).*/\1/')"
+  case " $types " in
+    *" $type "*) ;;
+    *) add "\"$type\" is not a type. Use $types." ;;
+  esac
+  scope="$(printf '%s\n' "$header" | sed -nE 's/^[a-z]+\(([^)]*)\).*/\1/p')"
+  if [ -n "$scope" ]; then
+    case " $scopes " in
+      *" $scope "*) ;;
+      *) add "\"$scope\" is not a scope. Use $scopes, or none." ;;
+    esac
+  fi
+  summary="$(printf '%s\n' "$header" | sed -E 's/^[^:]*: //')"
+  case "$summary" in
+    *.) add 'Do not end the summary with a period.' ;;
+  esac
+  case "$summary" in
+    [A-Z]*) add 'Start the summary in lower case.' ;;
+  esac
+fi
+
+second="$(grep -v '^#' "$file" | sed -n '2p')"
+if [ -n "$second" ]; then
+  add 'Leave a blank line between the first line and the body.'
+fi
+
+if grep -v '^#' "$file" | sed '1d' | grep -Eiq '^(co-authored-by|signed-off-by|reviewed-by|generated-by):'; then
+  add 'Leave out trailer lines such as Co-authored-by.'
+fi
+
+if [ -n "$problems" ]; then
+  echo "Commit message:" >&2
+  printf '%s' "$problems" >&2
+  echo "See CONTRIBUTING.md." >&2
+fi
+exit 0

@@ -1,6 +1,8 @@
 # The build context only needs: Dockerfile, entrypoint.sh, serve.mjs and packages/*.tgz
 .git
 .github
+.githooks
+.gitmessage
 .editorconfig
 .gitignore
 .env

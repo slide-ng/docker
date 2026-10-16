@@ -28,13 +28,15 @@ jobs:
         with:
           node-version: 22
       - name: shellcheck
-        run: shellcheck -x entrypoint.sh tests/entrypoint.test.sh
+        run: shellcheck -x entrypoint.sh tests/*.sh .githooks/commit-msg
       - name: hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
       - name: Entrypoint tests (no Docker, fake slide-ng)
         run: bash tests/entrypoint.test.sh
+      - name: Commit message hook test
+        run: bash tests/commit-msg.test.sh
 
   image:
     runs-on: ubuntu-latest

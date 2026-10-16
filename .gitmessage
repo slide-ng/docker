@@ -1,0 +1,11 @@
+
+# type(scope): summary
+#
+#   type   feat fix perf refactor test docs style build ci chore revert
+#   scope  entrypoint dockerfile serve compose tests docs ci (or leave it out)
+#   summary  imperative, lower case, no period, 72 characters at most
+#
+# Body (optional, after a blank line): why the change is needed, and how it
+# behaves now compared with before. Do not add trailer lines.
+#
+# See CONTRIBUTING.md
