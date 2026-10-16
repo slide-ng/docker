@@ -1,0 +1,72 @@
+# Example compose file. One service per mode; none starts by itself, you pick one with a profile:
+#
+#   cp .env.example .env            # then edit it
+#   docker compose --profile dev up           # live dev server with password
+#   docker compose --profile build run --rm build   # static site into ./out
+#   docker compose --profile export run --rm export # PDF into ./out
+#   docker compose --profile serve up         # build, then serve on :8080
+#   docker compose --profile watch up         # serve, rebuild on every change
+#
+# The deck is the folder next to this file named ./slides (change it below). It needs a slides.md.
+
+x-common: &common
+  image: slide-ng-docker:local
+  build:
+    context: .
+    args:
+      # A tarball made with `npm pack` (see README), or an npm name such as slide-ng@1.0.0 once published.
+      SLIDE_NG_SOURCE: ${SLIDE_NG_SOURCE:-packages/slide-ng-0.0.0.tgz}
+  # Files in ./out are yours, not uid 1000's. Set SLIDES_UID and SLIDES_GID in .env (`id -u`, `id -g`).
+  user: "${SLIDES_UID:-1000}:${SLIDES_GID:-1000}"
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  volumes:
+    - ./slides:/slides
+
+services:
+  dev:
+    <<: *common
+    profiles: [dev]
+    command: ["dev"]
+    environment:
+      # Required. Anyone with the password can open the deck and drive the presenter.
+      SLIDES_PASSWORD: ${SLIDES_PASSWORD:?set SLIDES_PASSWORD in .env}
+    ports:
+      # Only this machine. To let other devices on your network in, use "4230:4230" (and read the README first).
+      - "127.0.0.1:4230:4230"
+
+  build:
+    <<: *common
+    profiles: [build]
+    command: ["build"]          # add flags, for example: ["build", "--base", "/talk/", "--download"]
+    volumes:
+      - ./slides:/slides
+      - ./out:/out
+    shm_size: 1gb               # only matters with --download (Chromium draws the PDF)
+
+  export:
+    <<: *common
+    profiles: [export]
+    command: ["export", "--format", "pdf"]   # or png, pptx, md; add --with-clicks, --dark, ...
+    volumes:
+      - ./slides:/slides
+      - ./out:/out
+    shm_size: 1gb               # Chromium needs more than Docker's default 64 MB of shared memory
+
+  serve:
+    <<: *common
+    profiles: [serve]
+    command: ["serve"]
+    read_only: true             # nothing is written outside the folders below
+    tmpfs: ["/tmp:exec,mode=1777"]
+    ports:
+      - "127.0.0.1:8080:8080"
+
+  watch:
+    <<: *common
+    profiles: [watch]
+    command: ["watch"]
+    read_only: true
+    tmpfs: ["/tmp:exec,mode=1777"]
+    ports:
+      - "127.0.0.1:8080:8080"
