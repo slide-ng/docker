@@ -27,10 +27,13 @@ The commands marked NOT VERIFIED above are untested.
 
 ## Build the image
 
-slide.ng is not on npm yet, so the build argument `SLIDE_NG_SOURCE` is either a tarball inside the build context
-or anything `npm install` accepts (`@slide-ng/core@1.2.3`, once published):
+By default the image installs the latest `@slide-ng/core` from npm. The build argument `SLIDE_NG_SOURCE` picks another
+version (anything `npm install` accepts, such as `@slide-ng/core@0.1.0`) or a tarball inside the build context, for
+example one packed from a slide.ng checkout:
 
 ```sh
+docker build -t slide-ng .
+docker build --build-arg SLIDE_NG_SOURCE=@slide-ng/core@0.1.0 -t slide-ng .
 npm pack /path/to/slide.ng --pack-destination packages
 docker build --build-arg SLIDE_NG_SOURCE=packages/slide-ng-core-0.1.0.tgz -t slide-ng .
 ```

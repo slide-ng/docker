@@ -4,6 +4,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Changed
+
+- The image installs `@slide-ng/core` from npm by default (the old default, `slide-ng`, was not the package name). `.env.example` and `docker-compose.yml` use the same default; a tarball in `packages/` still works.
+
 ## [0.1.0] - unreleased
 
 The first version. Nothing is published yet.
