@@ -1,7 +1,6 @@
 # slide.ng in a container: serve a deck, build it to a static site, or export it to PDF, PNG or PPTX.
 # Usage and every variable are in the README. Build:
-#   npm pack /path/to/slide.ng --pack-destination packages
-#   docker build --build-arg SLIDE_NG_SOURCE=packages/slide-ng-core-0.1.0.tgz -t slide-ng .
+#   docker build -t slide-ng .   (or --build-arg SLIDE_NG_SOURCE=@slide-ng/core@<version>, or a tarball in packages/)
 
 # Node 22. slide.ng needs >= 22.22.3 (its "engines" field).
 ARG NODE_VERSION=22.23.3
@@ -24,8 +23,8 @@ RUN apt-get update \
 #        where slide.ng looks for them. SLIDE_NG_SOURCE is one of:
 #          - a file inside this build context, such as packages/slide-ng-core-0.1.0.tgz (made with `npm pack`)
 #          - anything npm understands: a package name or name@version
-#        slide.ng is not on npm yet, so the default (slide-ng) only works once it is published.
-ARG SLIDE_NG_SOURCE=slide-ng
+#        The default is a pinned @slide-ng/core release from npm; bump it when a new one is published.
+ARG SLIDE_NG_SOURCE=@slide-ng/core@0.1.0
 COPY packages/ /tmp/context/packages/
 # slide.ng never downloads a browser (it uses CHROME_PATH), this only makes that certain for its dependencies.
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
