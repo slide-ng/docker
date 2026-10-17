@@ -33,7 +33,7 @@ SLIDES_FILE=${SLIDES_FILE:-slides.md}
 WATCH_INTERVAL=${WATCH_INTERVAL:-2}
 MARKER=.slide-ng-build   # slide.ng only empties a folder that has this file (scripts/cli/safe-dir.mjs)
 
-log() { printf '[slide.ng-docker] %s\n' "$*" >&2; }
+log() { printf '[docker] %s\n' "$*" >&2; }
 die() { log "error: $*"; exit 1; }
 
 usage() { sed -n '2,/^set -euo/p' "${BASH_SOURCE[0]}" | sed '$d' | sed 's/^# \{0,1\}//'; }

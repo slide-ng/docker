@@ -90,6 +90,8 @@ rm "$SLIDES_DIR/slides.md"
 for m in dev build export serve watch; do
   if run "$m"; then bad "$m without a deck fails"; else check "$m without a deck fails with a hint" has "$T/case/stderr" "not found"; fi
 done
+check "log lines use the [docker] prefix" has "$T/case/stderr" "^\\[docker\\] "
+check "log lines drop the old repository name" lacks "$T/case/stderr" "slide.ng-docker"
 
 # --- dev --------------------------------------------------------------------
 fresh_env
