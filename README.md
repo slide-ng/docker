@@ -97,7 +97,7 @@ The idea comes from [slidevjs/container](https://github.com/slidevjs/container) 
 
 slide.ng is an independent open-source project. It is not affiliated with or endorsed by the Angular team or Google, or by Slidev. Angular is a trademark of Google LLC.
 
-Related repositories: [slide.ng](https://github.com/slide-ng/slide.ng), [themes](https://github.com/slide-ng/themes), [starter](https://github.com/slide-ng/starter), [docs](https://github.com/slide-ng/docs), [vscode](https://github.com/slide-ng/vscode). These addresses are placeholders until the repositories are published.
+Related repositories: [slide.ng](https://github.com/slide-ng/slide.ng), [themes](https://github.com/slide-ng/themes), [starter](https://github.com/slide-ng/starter), [docs](https://github.com/slide-ng/docs), [vscode](https://github.com/slide-ng/vscode-extension). These addresses are placeholders until the repositories are published.
 
 ## Maintainers
 
