@@ -3,8 +3,7 @@
   <img alt="slide.ng" src="assets/readme-banner-light.png" width="800">
 </picture>
 
-# slide.ng-docker
-
+# slide.ng docker
 A Docker image that runs [slide.ng](https://github.com/slide-ng/slide.ng) decks: live dev server, static build,
 PDF/PNG/PPTX export, and a small static server. It follows the idea of Slidev's container repository, with
 fewer moving parts: one `Dockerfile`, one `entrypoint.sh`, one static server (`serve.mjs`).
@@ -98,7 +97,7 @@ The idea comes from [slidevjs/container](https://github.com/slidevjs/container) 
 
 slide.ng is an independent open-source project. It is not affiliated with or endorsed by the Angular team or Google, or by Slidev. Angular is a trademark of Google LLC.
 
-Related repositories: [slide.ng](https://github.com/slide-ng/slide.ng), [themes](https://github.com/slide-ng/slide.ng-themes), [starter](https://github.com/slide-ng/slide.ng-starter), [docs](https://github.com/slide-ng/slide.ng-docs), [vscode](https://github.com/slide-ng/slide.ng-vscode). These addresses are placeholders until the repositories are published.
+Related repositories: [slide.ng](https://github.com/slide-ng/slide.ng), [themes](https://github.com/slide-ng/themes), [starter](https://github.com/slide-ng/starter), [docs](https://github.com/slide-ng/docs), [vscode](https://github.com/slide-ng/vscode). These addresses are placeholders until the repositories are published.
 
 ## Maintainers
 
@@ -122,7 +121,7 @@ Thanks to everyone who has helped. This project follows the [all-contributors](h
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/erkamyaman"><img src="https://avatars.githubusercontent.com/u/88717125?v=4?s=100" width="100px;" alt="Erkam Yaman"/><br /><sub><b>Erkam Yaman</b></sub></a><br /><a href="https://github.com/slide-ng/slide.ng-docker/commits?author=erkamyaman" title="Code">💻</a> <a href="https://github.com/slide-ng/slide.ng-docker/commits?author=erkamyaman" title="Documentation">📖</a> <a href="#infra-erkamyaman" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-erkamyaman" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/erkamyaman"><img src="https://avatars.githubusercontent.com/u/88717125?v=4?s=100" width="100px;" alt="Erkam Yaman"/><br /><sub><b>Erkam Yaman</b></sub></a><br /><a href="https://github.com/slide-ng/docker/commits?author=erkamyaman" title="Code">💻</a> <a href="https://github.com/slide-ng/docker/commits?author=erkamyaman" title="Documentation">📖</a> <a href="#infra-erkamyaman" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-erkamyaman" title="Maintenance">🚧</a></td>
     </tr>
   </tbody>
 </table>

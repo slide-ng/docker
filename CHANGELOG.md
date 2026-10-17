@@ -6,6 +6,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ### Changed
 
+- The repository is now `slide-ng/docker` (it was `slide-ng/slide.ng-docker`); links point to the new name.
 - The image installs `@slide-ng/core@0.1.0` from npm by default (the old default, `slide-ng`, was not the package name). `.env.example` and `docker-compose.yml` use the same default; a tarball in `packages/` still works.
 
 ## [0.1.0] - unreleased
@@ -21,5 +22,5 @@ The first version. Nothing is published yet.
 - Tests for the entrypoint and the server that run without Docker (`tests/entrypoint.test.sh`), and a GitHub Actions workflow that lints, tests and builds the image without pushing it.
 - Repository files for open source hosting: contribution guide, code of conduct, security policy, issue and pull request templates, a commit message hook and its test.
 
-[Unreleased]: https://github.com/slide-ng/slide.ng-docker/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/slide-ng/slide.ng-docker/commits/main
+[Unreleased]: https://github.com/slide-ng/docker/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/slide-ng/docker/commits/main

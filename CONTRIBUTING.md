@@ -1,5 +1,4 @@
-# Contributing to slide.ng-docker
-
+# Contributing to slide.ng docker
 Thanks for helping. This repository is small on purpose: one `Dockerfile`, one entrypoint script,
 one tiny static server. Please keep it readable.
 
@@ -13,8 +12,8 @@ There is no npm project here. You need bash, Node.js 22 (the tests use it for `s
 to build the image, Docker. `shellcheck` and `hadolint` are optional locally; CI runs both.
 
 ```sh
-git clone https://github.com/slide-ng/slide.ng-docker.git
-cd slide.ng-docker
+git clone https://github.com/slide-ng/docker.git
+cd docker
 git config core.hooksPath .githooks     # optional: warns about commit messages
 git config commit.template .gitmessage  # optional: shows the message format in your editor
 ```

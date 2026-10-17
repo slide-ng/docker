@@ -5,7 +5,7 @@
 Please do not open a public issue for a security problem.
 
 Use GitHub's private reporting: open the **Security** tab of this repository and choose
-**Report a vulnerability** (https://github.com/slide-ng/slide.ng-docker/security/advisories/new).
+**Report a vulnerability** (https://github.com/slide-ng/docker/security/advisories/new).
 Include the image tag or commit, the command you ran, and what you saw.
 
 If you cannot use GitHub, email erkamyaman35@gmail.com with "Security" in the subject.
