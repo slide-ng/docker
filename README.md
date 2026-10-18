@@ -4,23 +4,24 @@
 </picture>
 
 # slide.ng docker
+
 A Docker image that runs [slide.ng](https://github.com/slide-ng/slide.ng) decks: live dev server, static build,
 PDF/PNG/PPTX export, and a small static server. It follows the idea of Slidev's container repository, with
 fewer moving parts: one `Dockerfile`, one `entrypoint.sh`, one static server (`serve.mjs`).
 
 ## Status
 
-| Check | Result |
-| --- | --- |
-| `shellcheck` on `entrypoint.sh` and the test | passed |
-| `hadolint` on `Dockerfile` | passed (one rule off, see `.hadolint.yaml`) |
-| `bash tests/entrypoint.test.sh` (fake `slide-ng`, real `serve.mjs`) | 59 passed |
-| `entrypoint.sh` against the real slide.ng core, outside Docker (`build --base /talk/`, `serve --dist`, `export --format pdf`, `dev`) | worked |
-| `docker compose config` | parses |
-| Image build and `serve` | passed on Docker Desktop 29.8.2 for Mac (2026-10-16) |
-| Base image tag exists; Debian `chromium`, `fonts-*`, `tini` install; Chromium starts inside the container | passed (2026-10-16) |
-| Export from inside the container with `--shm-size=1g` and the deck mounted `:ro` | passed (PDF written). `--cap-drop ALL`, `--read-only` and `dev` mode are NOT VERIFIED. On Docker Desktop for Mac a deck mounted read-write fails, so mount it `:ro` |
-| GitHub Actions workflow runs | NOT VERIFIED (YAML parses only) |
+| Check                                                                                                                                | Result                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shellcheck` on `entrypoint.sh` and the test                                                                                         | passed                                                                                                                                                              |
+| `hadolint` on `Dockerfile`                                                                                                           | passed (one rule off, see `.hadolint.yaml`)                                                                                                                         |
+| `bash tests/entrypoint.test.sh` (fake `slide-ng`, real `serve.mjs`)                                                                  | 59 passed                                                                                                                                                           |
+| `entrypoint.sh` against the real slide.ng core, outside Docker (`build --base /talk/`, `serve --dist`, `export --format pdf`, `dev`) | worked                                                                                                                                                              |
+| `docker compose config`                                                                                                              | parses                                                                                                                                                              |
+| Image build and `serve`                                                                                                              | passed on Docker Desktop 29.8.2 for Mac (2026-10-16)                                                                                                                |
+| Base image tag exists; Debian `chromium`, `fonts-*`, `tini` install; Chromium starts inside the container                            | passed (2026-10-16)                                                                                                                                                 |
+| Export from inside the container with `--shm-size=1g` and the deck mounted `:ro`                                                     | passed (PDF written). `--cap-drop ALL`, `--read-only` and `dev` mode are NOT VERIFIED. On Docker Desktop for Mac a deck mounted read-write fails, so mount it `:ro` |
+| GitHub Actions workflow runs                                                                                                         | NOT VERIFIED (YAML parses only)                                                                                                                                     |
 
 The commands marked NOT VERIFIED above are untested.
 
@@ -89,7 +90,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md). Changes follow the [Code of Conduct](CO
 
 ## License
 
-MIT ([LICENSE](LICENSE)).
+MIT License © 2026 [Erkam Yaman](https://github.com/erkamyaman) ([LICENSE](LICENSE)).
 
 ## Credits and disclaimer
 
