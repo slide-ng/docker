@@ -11,6 +11,8 @@
 #   serve    build the deck, then serve the static site on port 8080
 #   watch    like serve, and rebuild when a file in /slides changes
 #   help     print this text
+# build, export, export-notes, serve and watch take several decks: `build a.md b.md` builds
+# /slides/a.md into /out/a/ (served under <base>a/) and /slides/b.md into /out/b/.
 # Any other first word is run as a command (`slide-ng format`, `node -v`, `bash`).
 #
 # Settings (environment variables):
@@ -49,8 +51,35 @@ ensure_home() {
   export NG_CLI_ANALYTICS=false
 }
 
-need_deck() {
-  [[ -f "${SLIDES_DIR}/${SLIDES_FILE}" ]] || die "${SLIDES_DIR}/${SLIDES_FILE} not found. Mount your deck folder: -v \"\$PWD:${SLIDES_DIR}\" (or set SLIDES_FILE)."
+need_deck() { # need_deck [file...]: the deck files (default SLIDES_FILE) must be in /slides
+  local file
+  (($#)) || set -- "$SLIDES_FILE"
+  for file in "$@"; do
+    [[ -f "${SLIDES_DIR}/${file}" ]] || die "${SLIDES_DIR}/${file} not found. Mount your deck folder: -v \"\$PWD:${SLIDES_DIR}\" (or set SLIDES_FILE)."
+  done
+}
+
+# The flags of slide-ng that take a value, so that a value such as `--output talk.md` is not read as a deck.
+VALUE_FLAGS=' --base --out -o --router-mode --executable-path --timeout --theme -t --lang --format --output --range --wait --wait-until --scale --dist --url --port -p --bind --log '
+
+# split_decks [args...]: the .md files named in the arguments go to DECKS (SLIDES_FILE when there are none),
+# everything else stays in FLAGS, in order.
+split_decks() {
+  DECKS=() FLAGS=()
+  local value_next=0 arg
+  for arg in "$@"; do
+    if ((value_next)); then
+      FLAGS+=("$arg"); value_next=0
+    elif [[ $arg == -* ]]; then
+      FLAGS+=("$arg")
+      [[ $VALUE_FLAGS != *" $arg "* ]] || value_next=1
+    elif [[ $arg == *.md ]]; then
+      DECKS+=("$arg")
+    else
+      FLAGS+=("$arg")
+    fi
+  done
+  ((${#DECKS[@]})) || DECKS=("$SLIDES_FILE")
 }
 
 need_writable() { # need_writable <folder> <what it is for>
@@ -86,13 +115,14 @@ stage_deck() {
   printf '%s\n' "$copy"
 }
 
-# build_site <destination> [slide-ng build flags]: builds the deck into a folder that does not exist yet.
+# build_site <destination> [slide-ng build flags]: builds the decks in DECKS into a folder that does not exist yet.
+# With several decks slide.ng puts each one in its own folder, <destination>/<name>/.
 build_site() {
   local dest=$1; shift
   local deck
   deck=$(stage_deck)
   mkdir -p "$(dirname "$dest")"
-  (cd "$deck" && "$SLIDE_NG_BIN" build "$SLIDES_FILE" "$@" --out "$dest")
+  (cd "$deck" && "$SLIDE_NG_BIN" build "${DECKS[@]}" "$@" --out "$dest")
 }
 
 # publish_site <built folder>: copies a build into /out. /out is usually a mount point, so it cannot be
@@ -148,11 +178,12 @@ mode_dev() {
 }
 
 mode_build() {
-  need_deck
+  split_decks "$@"
+  need_deck "${DECKS[@]}"
   refuse_flag build "The output folder is ${OUT_DIR}; mount it with -v." --out -o -- "$@"
   ensure_home
   rm -rf "${WORK_DIR}/dist"
-  build_site "${WORK_DIR}/dist" "$@"
+  build_site "${WORK_DIR}/dist" "${FLAGS[@]+"${FLAGS[@]}"}"
   publish_site "${WORK_DIR}/dist"
   rm -rf "${WORK_DIR}/dist"
   log "static site written to ${OUT_DIR}"
@@ -160,14 +191,17 @@ mode_build() {
 
 mode_export() { # export and export-notes
   local command=$1; shift
-  need_deck
+  split_decks "$@"
+  need_deck "${DECKS[@]}"
   need_writable "$OUT_DIR" "Mount a folder: -v \"\$PWD/out:${OUT_DIR}\" and run with --user \"\$(id -u):\$(id -g)\"."
   ensure_home
-  local deck
+  local deck file entries=()
   deck=$(stage_deck)
+  for file in "${DECKS[@]}"; do entries+=("${deck}/${file}"); done
   # slide.ng writes the file into the current folder (unless --output says otherwise), so work from /out.
+  # With several decks it writes one file per deck.
   cd "$OUT_DIR"
-  "$SLIDE_NG_BIN" "$command" "${deck}/${SLIDES_FILE}" "$@"
+  "$SLIDE_NG_BIN" "$command" "${entries[@]}" "${FLAGS[@]+"${FLAGS[@]}"}"
 }
 
 # The base path a build was made for, from its flags (needed by the server). `--base /talk/` or `--base=/talk/`.
@@ -203,16 +237,17 @@ mode_serve() {
     esac
   done
   base=$(base_from_flags "${args[@]+"${args[@]}"}")
+  split_decks "${args[@]+"${args[@]}"}"
   if [[ -n $dist ]]; then
     [[ -f "${dist}/index.html" ]] || die "serve: ${dist}/index.html not found (is it a built deck?)"
     log "serving ${dist} (no build)"
     exec node "$SERVER_JS" "$dist" --port "${PORT:-8080}" --host 0.0.0.0 --base "$base"
   fi
-  need_deck
+  need_deck "${DECKS[@]}"
   ensure_home
   mkdir -p "$WORK_DIR"
   rm -rf "${WORK_DIR}/site"
-  build_site "${WORK_DIR}/site" "${args[@]+"${args[@]}"}"
+  build_site "${WORK_DIR}/site" "${FLAGS[@]+"${FLAGS[@]}"}"
   exec node "$SERVER_JS" "${WORK_DIR}/site" --port "${PORT:-8080}" --host 0.0.0.0 --base "$base"
 }
 
@@ -222,10 +257,11 @@ fingerprint() {
 }
 
 mode_watch() {
-  need_deck
+  split_decks "$@"
+  need_deck "${DECKS[@]}"
   ensure_home
   mkdir -p "$WORK_DIR"
-  local args=("$@") base n=0 seen now
+  local args=("${FLAGS[@]+"${FLAGS[@]}"}") base n=0 seen now
   base=$(base_from_flags "${args[@]+"${args[@]}"}")
 
   rebuild() {
@@ -274,7 +310,7 @@ main() {
     serve) mode_serve "$@" ;;
     watch) mode_watch "$@" ;;
     help) usage ;;
-    format | create | theme | mcp) ensure_home; exec "$SLIDE_NG_BIN" "$mode" "$@" ;;
+    format | create | theme | mcp | skills) ensure_home; exec "$SLIDE_NG_BIN" "$mode" "$@" ;;
     *) exec "$mode" "$@" ;;
   esac
 }
