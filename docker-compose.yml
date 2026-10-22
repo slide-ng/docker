@@ -39,6 +39,7 @@ services:
     <<: *common
     profiles: [build]
     command: ["build"]          # add flags, for example: ["build", "--base", "/talk/", "--download"]
+                                # or several decks: ["build", "a.md", "b.md"] (into ./out/a/ and ./out/b/)
     volumes:
       - ./slides:/slides
       - ./out:/out
