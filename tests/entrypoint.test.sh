@@ -237,6 +237,19 @@ check "serve --dist: slide-ng is not called" test ! -s "$T/case/log"
 kill "${BG_PIDS[-1]}" 2>/dev/null || true
 
 fresh_env
+mkdir -p "$T/case/dist"
+echo "prebuilt" > "$T/case/dist/index.html"
+echo "1" > "$T/case/dist/inline-0123456789ab.js"
+echo "1" > "$T/case/dist/plain.js"
+port=$(free_port)
+PORT=$port bash "$ENTRY" serve --dist "$T/case/dist" >"$T/case/stdout" 2>"$T/case/stderr" &
+BG_PIDS+=($!)
+wait_for "http://127.0.0.1:$port/" "prebuilt" || true
+check "serve: inline-*.js files are cached for good" bash -c "curl -fsI http://127.0.0.1:$port/inline-0123456789ab.js | grep -qi 'cache-control: public, max-age=31536000, immutable'"
+check "serve: other files are not" bash -c "curl -fsI http://127.0.0.1:$port/plain.js | grep -qi 'cache-control: no-cache'"
+kill "${BG_PIDS[-1]}" 2>/dev/null || true
+
+fresh_env
 printf '# deck a\n' > "$SLIDES_DIR/a.md"
 printf '# deck b\n' > "$SLIDES_DIR/b.md"
 port=$(free_port)

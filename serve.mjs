@@ -50,8 +50,9 @@ export function resolveFile(root, base, pathname) {
   } catch { return null; }
 }
 
-// File names with a hash (main-ABCD1234.js) never change; the entry points do.
-const HASHED = /-[A-Za-z0-9_-]{8}\.(js|css|woff2?|png|jpg|svg)$/;
+// File names with a hash (main-ABCD1234.js, and inline-0123456789ab.js for the scripts slide.ng moves out of
+// index.html) never change; the entry points do.
+const HASHED = /(-[A-Za-z0-9_-]{8}\.(js|css|woff2?|png|jpg|svg)|\/inline-[0-9a-f]{12}\.js)$/;
 const cacheControl = (file) => (HASHED.test(file) ? 'public, max-age=31536000, immutable' : 'no-cache');
 
 /** The index.html of the deck an address belongs to: the nearest one at or above the address, not above `base`. */
