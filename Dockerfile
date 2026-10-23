@@ -21,10 +21,10 @@ RUN apt-get update \
 
 # --- 2. slide.ng itself. A global install keeps its dependencies inside the package folder, which is
 #        where slide.ng looks for them. SLIDE_NG_SOURCE is one of:
-#          - a file inside this build context, such as packages/slide-ng-core-0.1.0.tgz (made with `npm pack`)
+#          - a file inside this build context, such as packages/slide-ng-core-2.0.0.tgz (made with `npm pack`)
 #          - anything npm understands: a package name or name@version
 #        The default is a pinned @slide-ng/core release from npm; bump it when a new one is published.
-ARG SLIDE_NG_SOURCE=@slide-ng/core@0.1.0
+ARG SLIDE_NG_SOURCE=@slide-ng/core@2.0.0
 COPY packages/ /tmp/context/packages/
 # slide.ng never downloads a browser (it uses CHROME_PATH), this only makes that certain for its dependencies.
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1

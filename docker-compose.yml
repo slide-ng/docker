@@ -14,8 +14,8 @@ x-common: &common
   build:
     context: .
     args:
-      # An npm name such as @slide-ng/core@0.1.0, or a tarball made with `npm pack` (see README).
-      SLIDE_NG_SOURCE: ${SLIDE_NG_SOURCE:-@slide-ng/core@0.1.0}
+      # An npm name such as @slide-ng/core@2.0.0, or a tarball made with `npm pack` (see README).
+      SLIDE_NG_SOURCE: ${SLIDE_NG_SOURCE:-@slide-ng/core@2.0.0}
   # Files in ./out are yours, not uid 1000's. Set SLIDES_UID and SLIDES_GID in .env (`id -u`, `id -g`).
   user: "${SLIDES_UID:-1000}:${SLIDES_GID:-1000}"
   cap_drop: [ALL]
@@ -39,6 +39,7 @@ services:
     <<: *common
     profiles: [build]
     command: ["build"]          # add flags, for example: ["build", "--base", "/talk/", "--download"]
+                                # or several decks: ["build", "a.md", "b.md"] (into ./out/a/ and ./out/b/)
     volumes:
       - ./slides:/slides
       - ./out:/out

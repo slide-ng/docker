@@ -4,10 +4,18 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Added
+
+- `build`, `export`, `export-notes`, `serve` and `watch` take several decks, as slide.ng 2.0 does: `build a.md b.md` writes `/out/a/` and `/out/b/`, and `export a.md b.md` one file per deck. A `.md` value of a flag (`--output talk.md`) is not taken for a deck.
+- `serve.mjs` serves a build of several decks: an address gets the `index.html` of the deck folder it is in, `<base>a` goes to `<base>a/`, and the base lists the decks.
+- `skills` (`slide-ng skills install`) is passed to slide.ng like `format` and `theme`.
+
 ### Changed
 
 - The repository is now `slide-ng/docker` (it was `slide-ng/slide.ng-docker`); links point to the new name.
-- The image installs `@slide-ng/core@0.1.0` from npm by default (the old default, `slide-ng`, was not the package name). `.env.example` and `docker-compose.yml` use the same default; a tarball in `packages/` still works.
+- The image installs `@slide-ng/core@2.0.0` from npm by default (it was `0.1.0`; the first default, `slide-ng`, was not the package name). `.env.example` and `docker-compose.yml` use the same default; a tarball in `packages/` still works.
+- `serve.mjs` lets browsers keep the `inline-*.js` files of a slide.ng 2.0 build (the scripts moved out of `index.html`), as it does for the other files with a hash in their name.
+- The README says how `--router-mode` and a Content-Security-Policy work with the image.
 
 ## [0.1.0] - unreleased
 

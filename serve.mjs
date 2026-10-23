@@ -7,9 +7,11 @@
 //     so the watch mode can swap in a new build)
 //   - an address without a file extension (/3, /presenter/1) gets index.html, because the deck is a single-page app
 //   - the deck lives under --base (the same value the deck was built with); "/" redirects there
+//   - several decks built together (`slide-ng build a.md b.md`) live in <base>a/ and <base>b/: an address gets the
+//     index.html of the deck it is in, and <base> itself lists the decks
 //   - supports HEAD and Range requests (video seeking), refuses dot files and anything outside the folder
 // It does not compress and has no HTTPS. Put a reverse proxy in front for that.
-import { createReadStream, realpathSync, statSync } from 'node:fs';
+import { createReadStream, readdirSync, realpathSync, statSync } from 'node:fs';
 import http from 'node:http';
 import { extname, join, resolve, sep } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -48,9 +50,33 @@ export function resolveFile(root, base, pathname) {
   } catch { return null; }
 }
 
-// File names with a hash (main-ABCD1234.js) never change; the entry points do.
-const HASHED = /-[A-Za-z0-9_-]{8}\.(js|css|woff2?|png|jpg|svg)$/;
+// File names with a hash (main-ABCD1234.js, and inline-0123456789ab.js for the scripts slide.ng moves out of
+// index.html) never change; the entry points do.
+const HASHED = /(-[A-Za-z0-9_-]{8}\.(js|css|woff2?|png|jpg|svg)|\/inline-[0-9a-f]{12}\.js)$/;
 const cacheControl = (file) => (HASHED.test(file) ? 'public, max-age=31536000, immutable' : 'no-cache');
+
+/** The index.html of the deck an address belongs to: the nearest one at or above the address, not above `base`. */
+export function deckIndex(root, base, pathname) {
+  let dir = pathname.slice(0, pathname.lastIndexOf('/') + 1);
+  while (dir.startsWith(base)) {
+    const file = resolveFile(root, base, `${dir}index.html`);
+    if (file || dir === base) return file;
+    dir = dir.slice(0, dir.lastIndexOf('/', dir.length - 2) + 1);
+  }
+  return null;
+}
+
+/** The folders right under `root` that hold a deck (an index.html), for a build of several decks. */
+export function deckFolders(root) {
+  try {
+    return readdirSync(root, { withFileTypes: true })
+      .filter((entry) => !entry.name.startsWith('.') && resolveFile(root, '/', `/${entry.name}/index.html`))
+      .map((entry) => entry.name)
+      .sort();
+  } catch { return []; }
+}
+
+const escapeHtml = (text) => text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 /** `bytes=a-b` for a file of `size` bytes: [start, end], or null when it is not a usable single range. */
 export function parseRange(header, size) {
@@ -72,7 +98,19 @@ export function createDeckServer({ root, base = '/' }) {
     if (base !== '/' && pathname === base.slice(0, -1)) return send(301, '', { location: base });
     if (base !== '/' && !pathname.startsWith(base)) return pathname === '/' ? send(302, '', { location: base }) : send(404, 'not found');
 
-    const file = resolveFile(root, base, pathname) ?? (extname(pathname) ? null : resolveFile(root, base, `${base}index.html`));
+    let file = resolveFile(root, base, pathname);
+    if (!file && !extname(pathname)) {
+      // A deck's folder written without the last slash (/talk/a): go to /talk/a/, where its files are found.
+      if (!pathname.endsWith('/') && !pathname.startsWith('//') && resolveFile(root, base, `${pathname}/index.html`)) return send(301, '', { location: `${pathname}/` });
+      file = deckIndex(root, base, pathname);
+      if (!file && pathname === base) {
+        const decks = deckFolders(root);
+        if (decks.length) {
+          const list = decks.map((name) => `<li><a href="${escapeHtml(name)}/">${escapeHtml(name)}</a></li>`).join('');
+          return send(200, `<!doctype html><meta charset="utf-8"><title>Decks</title><ul>${list}</ul>\n`, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache', 'x-content-type-options': 'nosniff' });
+        }
+      }
+    }
     if (!file) return send(404, 'not found');
 
     const size = statSync(file).size;

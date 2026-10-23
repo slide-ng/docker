@@ -38,12 +38,18 @@ cmd=$1; shift
 case $cmd in
   build)
     [[ ${FAKE_FAIL:-0} != 1 && ! -e "$FAKE_LOG.fail" ]] || { echo "fake build failed" >&2; exit 1; }
-    out=''; prev=''
-    for a in "$@"; do [[ $prev == --out ]] && out=$a; prev=$a; done
+    out='' prev='' decks=()
+    for a in "$@"; do [[ $prev == --out ]] && out=$a; [[ $a == *.md ]] && decks+=("$a"); prev=$a; done
     [[ ! -e $out ]] || { echo "fake: $out already exists" >&2; exit 1; }
-    mkdir -p "$out/assets"
-    cat "$1" > "$out/index.html"
-    touch "$out/.slide-ng-build" "$out/assets/a.js"
+    mkdir -p "$out"
+    touch "$out/.slide-ng-build"
+    if ((${#decks[@]} > 1)); then   # several decks: one folder each, named after the file
+      for d in "${decks[@]}"; do n=$(basename "$d" .md); mkdir -p "$out/$n/assets"; cat "$d" > "$out/$n/index.html"; touch "$out/$n/assets/a.js"; done
+    else
+      mkdir -p "$out/assets"
+      cat "${decks[0]}" > "$out/index.html"
+      touch "$out/assets/a.js"
+    fi
     ;;
   export | export-notes) echo pdf > "$(pwd)/talk.pdf" ;;
 esac
@@ -83,6 +89,9 @@ check "unknown first word runs as a command" has "$T/case/stdout" 42
 
 run format
 check "format goes to slide-ng" has "$T/case/log" "| format"
+
+run skills install
+check "skills goes to slide-ng" has "$T/case/log" "| skills install"
 
 # --- missing deck -----------------------------------------------------------
 fresh_env
@@ -176,6 +185,15 @@ echo "keep" > "$OUT_DIR/keep.txt"
 FAKE_FAIL=1 run build || true
 check "build: a failed build leaves /out alone" bash -c "[[ \$(cat '$OUT_DIR/keep.txt') == keep ]]"
 
+fresh_env
+printf '# deck a\n' > "$SLIDES_DIR/a.md"
+printf '# deck b\n' > "$SLIDES_DIR/b.md"
+run build a.md b.md --base /x/ --router-mode hash
+check "build: several decks are passed to one build" has "$T/case/log" "build a.md b.md --base /x/ --router-mode hash --out $WORK_DIR/dist"
+check "build: several decks land in their folders in /out" bash -c "grep -q 'deck a' '$OUT_DIR/a/index.html' && grep -q 'deck b' '$OUT_DIR/b/index.html'"
+check "build: several decks keep the marker file" test -f "$OUT_DIR/.slide-ng-build"
+if run build a.md missing.md; then bad "build: a missing deck among several fails"; else check "build: a missing deck among several fails" has "$T/case/stderr" "missing.md not found"; fi
+
 # --- export -----------------------------------------------------------------
 fresh_env
 run export --format pdf --with-clicks
@@ -184,6 +202,16 @@ check "export: flags are passed through" has "$T/case/log" "export $SLIDES_DIR/s
 check "export: runs in /out" has "$T/case/log" "^$OUT_DIR |"
 run export-notes
 check "export-notes goes to slide-ng" has "$T/case/log" "| export-notes "
+
+fresh_env
+run export --format md --output talk.md
+check "export: a flag's .md value is not a deck" has "$T/case/log" "export $SLIDES_DIR/slides.md --format md --output talk.md$"
+
+fresh_env
+printf '# deck a\n' > "$SLIDES_DIR/a.md"
+printf '# deck b\n' > "$SLIDES_DIR/b.md"
+run export a.md b.md --format pdf
+check "export: several decks are passed together" has "$T/case/log" "export $SLIDES_DIR/a.md $SLIDES_DIR/b.md --format pdf$"
 
 # --- serve ------------------------------------------------------------------
 fresh_env
@@ -206,6 +234,32 @@ PORT=$port bash "$ENTRY" serve --dist "$T/case/dist" >"$T/case/stdout" 2>"$T/cas
 BG_PIDS+=($!)
 if wait_for "http://127.0.0.1:$port/" "prebuilt"; then ok "serve --dist: serves a folder without building"; else bad "serve --dist: serves a folder without building"; fi
 check "serve --dist: slide-ng is not called" test ! -s "$T/case/log"
+kill "${BG_PIDS[-1]}" 2>/dev/null || true
+
+fresh_env
+mkdir -p "$T/case/dist"
+echo "prebuilt" > "$T/case/dist/index.html"
+echo "1" > "$T/case/dist/inline-0123456789ab.js"
+echo "1" > "$T/case/dist/plain.js"
+port=$(free_port)
+PORT=$port bash "$ENTRY" serve --dist "$T/case/dist" >"$T/case/stdout" 2>"$T/case/stderr" &
+BG_PIDS+=($!)
+wait_for "http://127.0.0.1:$port/" "prebuilt" || true
+check "serve: inline-*.js files are cached for good" bash -c "curl -fsI http://127.0.0.1:$port/inline-0123456789ab.js | grep -qi 'cache-control: public, max-age=31536000, immutable'"
+check "serve: other files are not" bash -c "curl -fsI http://127.0.0.1:$port/plain.js | grep -qi 'cache-control: no-cache'"
+kill "${BG_PIDS[-1]}" 2>/dev/null || true
+
+fresh_env
+printf '# deck a\n' > "$SLIDES_DIR/a.md"
+printf '# deck b\n' > "$SLIDES_DIR/b.md"
+port=$(free_port)
+PORT=$port bash "$ENTRY" serve a.md b.md --base /x/ >"$T/case/stdout" 2>"$T/case/stderr" &
+BG_PIDS+=($!)
+if wait_for "http://127.0.0.1:$port/x/a/" "deck a"; then ok "serve: several decks, each at <base><name>/"; else bad "serve: several decks, each at <base><name>/" "$(cat "$T/case/stderr")"; fi
+check "serve: a slide address gets its own deck's index.html" bash -c "curl -fs http://127.0.0.1:$port/x/b/presenter/3 | grep -q 'deck b'"
+check "serve: a deck folder without the last slash redirects" bash -c "[[ \$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' http://127.0.0.1:$port/x/a) == '301 http://127.0.0.1:$port/x/a/' ]]"
+check "serve: the base lists the decks" bash -c "curl -fs http://127.0.0.1:$port/x/ | grep -q 'href=\"b/\"'"
+check "serve: several decks were built together" has "$T/case/log" "build a.md b.md --base /x/ --out $WORK_DIR/site"
 kill "${BG_PIDS[-1]}" 2>/dev/null || true
 
 # --- watch ------------------------------------------------------------------
