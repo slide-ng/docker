@@ -14,8 +14,8 @@ x-common: &common
   build:
     context: .
     args:
-      # An npm name such as @slide-ng/core@2.0.0, or a tarball made with `npm pack` (see README).
-      SLIDE_NG_SOURCE: ${SLIDE_NG_SOURCE:-@slide-ng/core@2.0.0}
+      # An npm name such as @slide-ng/core@2.2.0, or a tarball made with `npm pack` (see README).
+      SLIDE_NG_SOURCE: ${SLIDE_NG_SOURCE:-@slide-ng/core@2.2.0}
   # Files in ./out are yours, not uid 1000's. Set SLIDES_UID and SLIDES_GID in .env (`id -u`, `id -g`).
   user: "${SLIDES_UID:-1000}:${SLIDES_GID:-1000}"
   cap_drop: [ALL]

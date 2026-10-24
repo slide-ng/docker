@@ -36,7 +36,7 @@ body:
     id: image
     attributes:
       label: Image tag or commit, and slide.ng version
-      placeholder: slide-ng-docker:local built from commit abc1234, slide.ng 2.0.0
+      placeholder: slide-ng-docker:local built from commit abc1234, slide.ng 2.2.0
     validations:
       required: true
   - type: input
