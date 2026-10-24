@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       slide_ng_source:
-        description: "SLIDE_NG_SOURCE: an npm name such as @slide-ng/core@2.0.0. Leave empty to pack the slide.ng repository."
+        description: "SLIDE_NG_SOURCE: an npm name such as @slide-ng/core@2.2.0. Leave empty to pack the slide.ng repository."
         required: false
 
 permissions:
