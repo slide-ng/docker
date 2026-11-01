@@ -15,7 +15,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - The repository is now `slide-ng/docker` (it was `slide-ng/slide.ng-docker`); links point to the new name.
 - The image installs `@slide-ng/core@2.0.0` from npm by default (it was `0.1.0`; the first default, `slide-ng`, was not the package name). `.env.example` and `docker-compose.yml` use the same default; a tarball in `packages/` still works.
 - The image installs `@slide-ng/core@2.2.0` by default (it was `2.0.0`). A deck's `slide-ng.config.yaml`, new in slide.ng 2.2, sits next to `slides.md` in `/slides`, so every mode reads it and `watch` rebuilds when it changes.
-- The image installs `@slide-ng/core@3.2.0` by default (it was `3.1.1`, before that `3.1.0`, `3.0.0` and `2.2.0`). slide.ng 3.1's `browser.proxy` needs no change to the image: the proxy is a separate host that a deck names in its headmatter.
+- The image installs `@slide-ng/core@3.3.0` by default (it was `3.2.0`, before that `3.1.1`, `3.1.0`, `3.0.0` and `2.2.0`). slide.ng 3.1's `browser.proxy` needs no change to the image: the proxy is a separate host that a deck names in its headmatter.
 - `serve.mjs` lets browsers keep the `inline-*.js` files of a slide.ng 2.0 build (the scripts moved out of `index.html`), as it does for the other files with a hash in their name.
 - The README says how `--router-mode` and a Content-Security-Policy work with the image.
 - The README says how slide.ng 3.0's deck browser works with the image: `dev` runs with `--remote`, so its local proxy is off and pages load directly, with no extra port; a Content-Security-Policy in front of a build needs `frame-src` for the sites it shows.
