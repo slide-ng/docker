@@ -70,10 +70,11 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/slides" -v "$PWD/out:/out" 
 ```
 
 - `dev` saves edits into `/slides`, so it cannot be mounted `:ro`. Open the "private slide show" address it prints and use `localhost` or an IP address as the host.
+- slide.ng 3.0's deck browser (`b`, or the globe button) works in every mode, but the image's `dev` always runs with `--remote`, so slide.ng does not start the deck browser's local proxy there. Pages load directly in the viewer's browser, as in a built deck: a site that refuses to be shown in a frame gets **Open in window**. There is no extra port to publish.
 - `build`, `export`, `export-notes`, `serve` and `watch` take several `.md` files after the mode, as `slide-ng` does. `build a.md b.md` writes `/out/a/` and `/out/b/`, each served under `<base>a/` and `<base>b/`; `export a.md b.md` writes one file per deck. `serve` and `watch` serve each deck in its folder and list the decks at the base. `dev` runs one deck.
 - `--router-mode hash` (or `memory`) for `build`, `serve` and `watch` is passed to slide.ng like any other flag; a hash or memory build needs no help from the web server.
 - `serve --dist /site` serves a folder you built earlier. `serve.mjs` has no compression and no TLS; for a public site put the `build` output behind a real web server.
-- `serve.mjs` sends no `Content-Security-Policy`. A slide.ng 2.0 build keeps no inline script in `index.html` (they are `inline-*.js` files), so the web server in front of it can send a strict policy; the one slide.ng tested is in its [HOSTING.md](https://github.com/slide-ng/slide.ng/blob/main/docs/HOSTING.md#content-security-policy).
+- `serve.mjs` sends no `Content-Security-Policy`. A slide.ng 2.0 build keeps no inline script in `index.html` (they are `inline-*.js` files), so the web server in front of it can send a strict policy; the one slide.ng tested is in its [HOSTING.md](https://github.com/slide-ng/slide.ng/blob/main/docs/HOSTING.md#content-security-policy). With slide.ng 3.0 such a policy also decides what the deck browser can show: it needs `frame-src` for the sites it opens, and `connect-src` for `api.open-meteo.com`, `geocoding-api.open-meteo.com` and `nominatim.openstreetmap.org` when a viewer turns the weather on.
 - The container runs as `node` (uid 1000). On Linux pass `--user "$(id -u):$(id -g)"` and create `out` yourself, or it belongs to root. Docker Desktop maps ownership for you.
 
 ### Chromium and the sandbox
