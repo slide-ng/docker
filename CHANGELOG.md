@@ -17,6 +17,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - The image installs `@slide-ng/core@2.2.0` by default (it was `2.0.0`). A deck's `slide-ng.config.yaml`, new in slide.ng 2.2, sits next to `slides.md` in `/slides`, so every mode reads it and `watch` rebuilds when it changes.
 - `serve.mjs` lets browsers keep the `inline-*.js` files of a slide.ng 2.0 build (the scripts moved out of `index.html`), as it does for the other files with a hash in their name.
 - The README says how `--router-mode` and a Content-Security-Policy work with the image.
+- The README says how slide.ng 3.0's deck browser works with the image: `dev` runs with `--remote`, so its local proxy is off and pages load directly, with no extra port; a Content-Security-Policy in front of a build needs `frame-src` for the sites it shows.
 
 ## [0.1.0] - unreleased
 
