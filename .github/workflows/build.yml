@@ -30,7 +30,7 @@ jobs:
       - name: shellcheck
         run: shellcheck -x entrypoint.sh tests/*.sh .githooks/commit-msg
       - name: hadolint
-        uses: hadolint/hadolint-action@v3.1.0
+        uses: hadolint/hadolint-action@v3.5.0
         with:
           dockerfile: Dockerfile
       - name: Entrypoint tests (no Docker, fake slide-ng)
