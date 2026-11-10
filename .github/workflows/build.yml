@@ -73,7 +73,7 @@ jobs:
         if: steps.source.outputs.pack != 'true'
         run: echo "SLIDE_NG_SOURCE=${{ steps.source.outputs.spec }}" >> "$GITHUB_ENV"
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
       - name: Build the image (load it, do not push)
         uses: docker/build-push-action@v6
         with:
